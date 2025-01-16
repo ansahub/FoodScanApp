@@ -1,0 +1,26 @@
+﻿# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build-mapp
+bin/
+obj/
+out/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Loggar och tillflliga filer
+*.log
+*.tmp
+*.ldb
+
+# Secrets och knslig data
+secrets.json
+
+# OS-specifika filer
+.DS_Store
+Thumbs.db
