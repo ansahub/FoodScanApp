@@ -18,6 +18,7 @@ out/
 *.tmp
 *.ldb
 
+
 # Secrets och sensitive data
 secrets.json
 
