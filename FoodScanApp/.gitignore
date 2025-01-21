@@ -13,14 +13,15 @@ out/
 *.snupkg
 .nuget/
 
-# Loggar och tillflliga filer
+# Logs and temporary files
 *.log
 *.tmp
 *.ldb
 
-# Secrets och knslig data
+
+# Secrets och sensitive data
 secrets.json
 
-# OS-specifika filer
+# OS specific files
 .DS_Store
 Thumbs.db

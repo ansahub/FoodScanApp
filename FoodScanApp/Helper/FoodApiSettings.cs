@@ -1,4 +1,4 @@
-﻿namespace FoodScanApp
+﻿namespace FoodScanApp.Helper
 {
     public class FoodApiSettings
     {

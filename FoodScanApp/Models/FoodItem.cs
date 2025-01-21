@@ -9,7 +9,6 @@
         public string Namn { get; set; }
         public string VetenskapligtNamn { get; set; }
         public string Projekt { get; set; }
-        //public List<Ingredient> Ingredienser { get; set; }
 
     }
 }
