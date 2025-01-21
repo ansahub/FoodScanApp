@@ -1,5 +1,5 @@
-using FoodScanApp;
 using FoodScanApp.Controllers;
+using FoodScanApp.Helper;
 using FoodScanApp.Services;
 using Microsoft.AspNetCore.Hosting;
 

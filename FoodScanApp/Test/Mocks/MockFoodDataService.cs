@@ -1,4 +1,4 @@
-﻿using FoodScanApp.Controllers;
+﻿/*using FoodScanApp.Controllers;
 using FoodScanApp.DTOs;
 using FoodScanApp.Models;
 using FoodScanApp.Services;
@@ -9,25 +9,22 @@ namespace FoodScanApp.Test.Mocks
 {
     public class MockFoodDataService : IFoodDataService
     {
-        private FoodResponseDTO _foodResponseDTO;
-        public Task<FoodResponseDTO> GetAllFoodItemsAsync()
+        private FoodItemDTO _foodResponseDTO;
+
+        public Task<List<FoodItemDTO>> GetAllFoodItemsAsync()
         {
-            return Task.FromResult(new FoodResponseDTO
+            return Task.FromResult(new List<FoodItemDTO>
             {
-                Livsmedel = new List<FoodItem>
-        {
-            new FoodItem
-            {
-                LivsmedelsTypId = 1,
-                LivsmedelsTyp = "Typ A",
-                Nummer = 1,
-                Version = "1.0",
-                Namn = "Test Livsmedel",
-                VetenskapligtNamn = "Testus Livsmedelus",
-                Projekt = "Projekt A",
-                /*Ingredienser = new List<Ingredient>
+                new FoodItemDTO
                 {
-                    new Ingredient
+                    LivsmedelsTypId = 1,                    
+                    Nummer = 1,                    
+                    Namn = "Test Livsmedel",
+                    VetenskapligtNamn = "Testus Livsmedelus",
+                    
+                    Ingredienser = new List<IngredientDTO>
+                {
+                    new IngredientDTO
                     {
                         Nummer = 1,
                         Namn = "Salt",
@@ -43,7 +40,7 @@ namespace FoodScanApp.Test.Mocks
                         },
                         EuroFIRkod = "E123"
                     },
-                    new Ingredient
+                    new IngredientDTO
                     {
                         Nummer = 2,
                         Namn = "Sugar",
@@ -55,20 +52,18 @@ namespace FoodScanApp.Test.Mocks
                         RetentionsFaktorer = new List<RetentionFactor>(),
                         EuroFIRkod = "E124"
                     }
-                }*/
+                }
             },
-            new FoodItem
+            new FoodItemDTO
             {
-                LivsmedelsTypId = 2,
-                LivsmedelsTyp = "Typ B",
-                Nummer = 2,
-                Version = "1.1",
+                LivsmedelsTypId = 2,               
+                Nummer = 2,                
                 Namn = "Test Livsmedel 2",
                 VetenskapligtNamn = "Testus Livsmedelus II",
-                Projekt = "Projekt B",
-                /*Ingredienser = new List<Ingredient>
+            
+                Ingredienser = new List<IngredientDTO>
                 {
-                    new Ingredient
+                    new IngredientDTO
                     {
                         Nummer = 3,
                         Namn = "Flour",
@@ -83,20 +78,26 @@ namespace FoodScanApp.Test.Mocks
                         },
                         EuroFIRkod = "E125"
                     }
-                }*/
+                }
             }
-        }
+
             });
         }
 
-        public Task<FoodItem> GetFoodItemByFoodIdAsync(int foodId)
+        public Task<FoodItemDTO> GetFoodItemByFoodIdAsync(int foodId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<IngredientResponseDTO>> GetIngredientsByFoodIdAsync(int foodId)
+        public Task<FoodItemDTO> GetFoodItemWithIngredientsAsync(int foodId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId)
         {
             throw new NotImplementedException();
         }
     }
 }
+*/

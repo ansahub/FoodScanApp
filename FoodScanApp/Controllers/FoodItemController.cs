@@ -1,4 +1,7 @@
-﻿using FoodScanApp.Services;
+﻿using System.Globalization;
+using FoodScanApp.DTOs;
+using FoodScanApp.Models;
+using FoodScanApp.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodScanApp.Controllers
@@ -28,22 +31,22 @@ namespace FoodScanApp.Controllers
             {
                 var foodResponse = await _foodService.GetAllFoodItemsAsync();
 
-                if (foodResponse == null || !foodResponse.Livsmedel.Any())
+                if (foodResponse == null)
                 {
-                    // Returnera 404 om inga livsmedel hittas
+                    // Return 404 if no FoodItem found
                     return NotFound("Inga livsmedel hittades.");
                 }
 
-                return Ok(foodResponse.Livsmedel); // Returnera bara listan av livsmedel
+                return Ok(foodResponse); // return a list of FoodItem
             }
             catch (HttpRequestException ex)
             {
-                // Returnera 502 om det är problem med API-anropet
+                // Return 502 if there is issue with API call
                 return StatusCode(StatusCodes.Status502BadGateway, "Fel vid anrop till API: " + ex.Message);
             }
             catch (Exception ex)
             {
-                // Returnera 500 för alla andra typer av fel
+                // Return 500 for other type of errors
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internt serverfel: " + ex.Message);
             }
 
@@ -55,50 +58,77 @@ namespace FoodScanApp.Controllers
             try
             {
                 var foodItem = await _foodService.GetFoodItemByFoodIdAsync(foodId);
-                return Ok(foodItem); // Returnera objektet om det hittas
+                return Ok(foodItem); // Return the FoodItem object if found
             }
             catch (KeyNotFoundException ex)
             {
-                // Returnera 404 om resursen inte hittades
                 return NotFound(ex.Message);
             }
             catch (HttpRequestException ex)
             {
-                // Returnera 502 om det är problem med API-anropet
                 return StatusCode(StatusCodes.Status502BadGateway, ex.Message);
             }
             catch (Exception ex)
             {
-                // Returnera 500 för alla andra typer av fel
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internt serverfel: " + ex.Message);
             }
         }
 
 
         [HttpGet("{foodId}/ingredients")]
-        public async Task<IActionResult> GetIngredients(int foodId)
+        public async Task<IActionResult> GetIngredientsByFoodId(int foodId)
         {
             try
             {
                 var ingredients = await _foodService.GetIngredientsByFoodIdAsync(foodId);
 
-                return Ok(ingredients); // Returnera objektet om det hittas
+                if (ingredients != null)
+                {
+                    return Ok(ingredients); // Return a list of Ingredients if found
+                }
+                throw new KeyNotFoundException($"Food item with ID {foodId} not found.");
+
             }
             catch (KeyNotFoundException ex)
             {
-                // Returnera 404 om resursen inte hittades
                 return NotFound(ex.Message);
             }
             catch (HttpRequestException ex)
             {
-                // Returnera 502 om det är problem med API-anropet
                 return StatusCode(StatusCodes.Status502BadGateway, ex.Message);
             }
             catch (Exception ex)
             {
-                // Returnera 500 för alla andra typer av fel
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internt serverfel: " + ex.Message);
             }
         }
+
+        [HttpGet("{foodId}/livsmedelingrediens")]
+        public async Task<IActionResult> GetFoodItemWithIngredientsByFoodId(int foodId)
+        {
+            try
+            {
+                var foodItem = await _foodService.GetFoodItemWithIngredientsAsync(foodId);
+
+                if (foodItem != null)
+                {         
+                    return Ok(foodItem); // Return the FoodItem with Ingredients if ok and found
+                }
+                throw new KeyNotFoundException($"Food item with ID {foodId} not found.");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(StatusCodes.Status502BadGateway, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internt serverfel: " + ex.Message);
+            }
+        }
+
     }
 }
