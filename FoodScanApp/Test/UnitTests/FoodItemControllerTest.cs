@@ -1,5 +1,6 @@
-﻿/*using FoodScanApp.Controllers;
+﻿using FoodScanApp.Controllers;
 using FoodScanApp.DTOs;
+using FoodScanApp.Helper;
 using FoodScanApp.Models;
 using FoodScanApp.Services;
 using FoodScanApp.Test.Mocks;
@@ -11,66 +12,28 @@ namespace FoodScanApp.Test.UnitTests
 {
     public class FoodItemControllerTest
     {
-        [Fact]
-        public async Task GetAllFoodItems_ReturnsOkResult()
-        {
-            // Arrange
-            var mockService = new MockFoodDataService();
-            var controller = new FoodItemController(mockService);
+        LocalizedMessage localizedMessage = new LocalizedMessage();
+              
 
-            // Act
-            var result = await controller.GetAllFoodItems();
+        [Fact]
+        public async Task ReturnMessageInEnglishWhenNotFindFoodItem()
+        {
+            // Arrange        
+            var mockService = new MockFoodDataService(localizedMessage);
+
+            // Act & Assert
+            var foodId = 22; // ID that doesn't exist in the mock
+            var language = 2; // English
+
+            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
+                () => mockService.GetFoodItemByFoodIdAsync(foodId, language)
+            );
 
             // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var value = Assert.IsAssignableFrom<IEnumerable<FoodItem>>(okResult.Value);
-            Assert.NotEmpty(value);
+            var expectedMessage = $"Can't find the food item with the foodId:{foodId}";
+            Assert.Equal(expectedMessage, exception.Message);
         }
 
 
-        [Fact]
-        public async Task GetAllFoodItems_ReturnsNotFound_WhenNoFoodItems()
-        {
-            // Arrange
-            var mockService = new Mock<IFoodDataService>();
-
-            // Mock an empty list as response
-            mockService.Setup(service => service.GetAllFoodItemsAsync())
-                       .ReturnsAsync(new List<FoodItemDTO>());
-
-            var controller = new FoodItemController(mockService.Object);
-
-            // Act
-            var result = await controller.GetAllFoodItems();
-
-            // Assert
-            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal("Inga livsmedel hittades.", notFoundResult.Value);
-        }
-
-
-        [Fact]
-        public async Task GetAllFoodItems_ReturnsCorrectFoodItems()
-        {
-            // Arrange
-            var mockService = new MockFoodDataService();
-            var controller = new FoodItemController(mockService);
-
-            // Act
-            var result = await controller.GetAllFoodItems();
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var value = Assert.IsAssignableFrom<IEnumerable<FoodItem>>(okResult.Value);
-            var foodItems = value.ToList();
-
-            Assert.NotEmpty(foodItems);
-            Assert.Equal(2, foodItems.Count); // Förutsatt att vi mockat 2 FoodItem
-            Assert.Equal("Test Livsmedel", foodItems[0].Namn);
-            Assert.Equal(1, foodItems[0].Nummer);
-            Assert.Equal("Test Livsmedel 2", foodItems[1].Namn);
-            Assert.Equal(2, foodItems[1].Nummer);
-        }
     }
 }
-*/
