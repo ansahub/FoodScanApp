@@ -4,6 +4,7 @@ using FoodScanApp.DTOs;
 using FoodScanApp.Helper;
 using FoodScanApp.Models;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -18,12 +19,14 @@ namespace FoodScanApp.Services
     {
         private readonly HttpClient _httpClient;
         private readonly FoodApiSettings _settings;
+        private readonly LocalizedMessage _localizedMessage;
         private const string LivsMedelKey = "livsmedel";
 
-        public FoodDataService(HttpClient httpClient, IOptions<FoodApiSettings> settings)
+        public FoodDataService(HttpClient httpClient, IOptions<FoodApiSettings> settings, LocalizedMessage localizedMessage)
         {
             _httpClient = httpClient;
-            _settings = settings.Value;
+            _settings = settings.Value; //URL and endpoint settings
+            _localizedMessage = localizedMessage;
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace FoodScanApp.Services
                 throw new Exception($"'{LivsMedelKey}' saknas eller innehåller ingen data");
             }
             var foodItemsArray = jsonObject[LivsMedelKey]?.ToObject<List<FoodItemDTO>>();
-         
+
             return foodItemsArray;
         }
 
@@ -69,19 +72,22 @@ namespace FoodScanApp.Services
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="HttpRequestException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task<FoodItemDTO> GetFoodItemByFoodIdAsync(int foodId)
+        public async Task<FoodItemDTO> GetFoodItemByFoodIdAsync(int foodId, int language)
         {
-            var url = $"{_settings.BaseUrl}{_settings.Endpoint}/{foodId}/?sprak=1"; //Make "sprak" dynamic as variable/input 1=Swe, 2=eng
+            var url = $"{_settings.BaseUrl}{_settings.Endpoint}/{foodId}/?sprak={language}"; //Make "sprak" dynamic as variable/input 1=Swe, 2=eng
             var response = await _httpClient.GetAsync(url);
+            var errorMessage = String.Empty;            
 
             if (!response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new KeyNotFoundException($"Livsmedel med Livsmedelsnummer {foodId} hittades inte.");
+                    errorMessage = _localizedMessage.GetLocalizedMessage("FoodItemNotFound", language);
+                    throw new KeyNotFoundException($"{errorMessage}{foodId}");
                 }
 
-                throw new HttpRequestException($"Fel vid försök att hämta livsmedel med livsmedelnummer: {foodId} {response.StatusCode}");
+                errorMessage = _localizedMessage.GetLocalizedMessage("RequestEx", language);
+                throw new HttpRequestException($"{errorMessage}{foodId}, {response.StatusCode}");
             }
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -102,19 +108,22 @@ namespace FoodScanApp.Services
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="HttpRequestException"></exception>
-        public async Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId)
+        public async Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId, int language)
         {
-            var url = $"{_settings.BaseUrl}{_settings.Endpoint}/{foodId}/ingredienser?sprak=1";
+            var url = $"{_settings.BaseUrl}{_settings.Endpoint}/{foodId}/ingredienser?sprak={language}";
             var response = await _httpClient.GetAsync(url);
+            var errorMessage = String.Empty;
 
             if (!response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new KeyNotFoundException($"Ingredienser för livsmedel med livsmedelnummer {foodId} hittades inte.");
+                    errorMessage = _localizedMessage.GetLocalizedMessage("FoodItemNotFound", language);
+                    throw new KeyNotFoundException($"{errorMessage}{foodId}");
                 }
 
-                throw new HttpRequestException($"Fel vid hämtning av ingredienser: {response.StatusCode}");
+                errorMessage = _localizedMessage.GetLocalizedMessage("RequestEx", language);
+                throw new HttpRequestException($"{errorMessage}{foodId}, {response.StatusCode}");
             }
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -133,13 +142,13 @@ namespace FoodScanApp.Services
         /// </summary>
         /// <param name="foodId"></param>
         /// <returns></returns>
-        public async Task<FoodItemDTO> GetFoodItemWithIngredientsAsync(int foodId)
+        public async Task<FoodItemDTO> GetFoodItemWithIngredientsAsync(int foodId, int language)
         {
             // Fetch FoodItem
-            var foodItem = await GetFoodItemByFoodIdAsync(foodId);
+            var foodItem = await GetFoodItemByFoodIdAsync(foodId, language);
 
             // Fetch Ingredients based on the FoodItem
-            var ingredients = await GetIngredientsByFoodIdAsync(foodId);
+            var ingredients = await GetIngredientsByFoodIdAsync(foodId, language);
 
             // Add ingredients to the FoodItem
             foodItem.Ingredienser = ingredients;
@@ -147,6 +156,6 @@ namespace FoodScanApp.Services
             return foodItem;
         }
 
-   
+
     }
 }

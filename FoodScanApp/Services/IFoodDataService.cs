@@ -7,8 +7,8 @@ namespace FoodScanApp.Services
     public interface IFoodDataService
     {
         Task<List<FoodItemDTO>> GetAllFoodItemsAsync();
-        Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId);
-        Task<FoodItemDTO> GetFoodItemByFoodIdAsync(int foodId);
-        Task<FoodItemDTO> GetFoodItemWithIngredientsAsync(int foodId);
+        Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId, int language);
+        Task<FoodItemDTO> GetFoodItemByFoodIdAsync(int foodId, int language);
+        Task<FoodItemDTO> GetFoodItemWithIngredientsAsync(int foodId, int language);
     }
 }

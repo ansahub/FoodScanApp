@@ -31,34 +31,28 @@ namespace FoodScanApp.Controllers
             {
                 var foodResponse = await _foodService.GetAllFoodItemsAsync();
 
-                if (foodResponse == null)
-                {
-                    // Return 404 if no FoodItem found
-                    return NotFound("Inga livsmedel hittades.");
-                }
-
                 return Ok(foodResponse); // return a list of FoodItem
             }
             catch (HttpRequestException ex)
             {
                 // Return 502 if there is issue with API call
-                return StatusCode(StatusCodes.Status502BadGateway, "Fel vid anrop till API: " + ex.Message);
+                return StatusCode(StatusCodes.Status502BadGateway, "Error while calling the API" + ex.Message);
             }
             catch (Exception ex)
             {
                 // Return 500 for other type of errors
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internt serverfel: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Unexpected internal server error occured. " + ex.Message);
             }
 
         }
 
-        [HttpGet("{foodId}")]
-        public async Task<IActionResult> GetFoodItemByFoodId(int foodId)
+        [HttpGet("{foodId}/{language}")]
+        public async Task<IActionResult> GetFoodItemByFoodId(int foodId, int language)
         {
             try
             {
-                var foodItem = await _foodService.GetFoodItemByFoodIdAsync(foodId);
-                return Ok(foodItem); // Return the FoodItem object if found
+                var foodItem = await _foodService.GetFoodItemByFoodIdAsync(foodId, language);
+                return Ok(foodItem);
             }
             catch (KeyNotFoundException ex)
             {
@@ -70,28 +64,23 @@ namespace FoodScanApp.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internt serverfel: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server issue: " + ex.Message);
             }
         }
 
 
-        [HttpGet("{foodId}/ingredients")]
-        public async Task<IActionResult> GetIngredientsByFoodId(int foodId)
+        [HttpGet("{foodId}/ingredients/{language}")]
+        public async Task<IActionResult> GetIngredientsByFoodId(int foodId, int language)
         {
             try
             {
-                var ingredients = await _foodService.GetIngredientsByFoodIdAsync(foodId);
+                var ingredients = await _foodService.GetIngredientsByFoodIdAsync(foodId, language);
 
-                if (ingredients != null)
-                {
-                    return Ok(ingredients); // Return a list of Ingredients if found
-                }
-                throw new KeyNotFoundException($"Food item with ID {foodId} not found.");
-
+                return Ok(ingredients); // Return a list of Ingredients if found                
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound($"Food item with ID {foodId} not found." + ex.Message);
             }
             catch (HttpRequestException ex)
             {
@@ -99,26 +88,22 @@ namespace FoodScanApp.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internt serverfel: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server issue: " + ex.Message);
             }
         }
 
-        [HttpGet("{foodId}/livsmedelingrediens")]
-        public async Task<IActionResult> GetFoodItemWithIngredientsByFoodId(int foodId)
+        [HttpGet("{foodId}/livsmedelingrediens/{language}")]
+        public async Task<IActionResult> GetFoodItemWithIngredientsByFoodId(int foodId, int language)
         {
             try
             {
-                var foodItem = await _foodService.GetFoodItemWithIngredientsAsync(foodId);
+                var foodItem = await _foodService.GetFoodItemWithIngredientsAsync(foodId, language);
 
-                if (foodItem != null)
-                {         
-                    return Ok(foodItem); // Return the FoodItem with Ingredients if ok and found
-                }
-                throw new KeyNotFoundException($"Food item with ID {foodId} not found.");
+                return Ok(foodItem);
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound($"Food item with ID {foodId} not found." + ex.Message);
             }
             catch (HttpRequestException ex)
             {
@@ -126,7 +111,7 @@ namespace FoodScanApp.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internt serverfel: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server issue: " + ex.Message);
             }
         }
 

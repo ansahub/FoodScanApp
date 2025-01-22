@@ -1,15 +1,23 @@
-﻿/*using FoodScanApp.Controllers;
+﻿using FoodScanApp.Controllers;
 using FoodScanApp.DTOs;
-using FoodScanApp.Models;
+using FoodScanApp.Helper;
 using FoodScanApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace FoodScanApp.Test.Mocks
 {
     public class MockFoodDataService : IFoodDataService
     {
         private FoodItemDTO _foodResponseDTO;
+        private readonly LocalizedMessage _localizedMessage;
+
+        public MockFoodDataService(LocalizedMessage localizedMessage)
+        {
+            _localizedMessage = localizedMessage;
+        }
 
         public Task<List<FoodItemDTO>> GetAllFoodItemsAsync()
         {
@@ -17,87 +25,157 @@ namespace FoodScanApp.Test.Mocks
             {
                 new FoodItemDTO
                 {
-                    LivsmedelsTypId = 1,                    
-                    Nummer = 1,                    
-                    Namn = "Test Livsmedel",
-                    VetenskapligtNamn = "Testus Livsmedelus",
-                    
-                    Ingredienser = new List<IngredientDTO>
+                    FoodItemId = 0,
+                    LivsmedelsTypId = 2,
+                    Nummer = 2073,
+                    Namn = "Peanut sauce",
+                    VetenskapligtNamn = "",
+                    Ingredienser = new List<IngredientDTO>()
+                },
+                new FoodItemDTO
                 {
-                    new IngredientDTO
-                    {
-                        Nummer = 1,
-                        Namn = "Salt",
-                        VattenFaktor = 0.1,
-                        FettFaktor = 0.0,
-                        ViktForeTillagning = 100,
-                        ViktEfterTillagning = 90,
-                        Tillagningsfaktor = "10%",
-                        RetentionsFaktorer = new List<RetentionFactor>
-                        {
-                            new RetentionFactor { NaringsamnesNamn = "Salt", Faktor = "0.8" },
-                            new RetentionFactor { NaringsamnesNamn = "Vatten", Faktor = "0.9" }
-                        },
-                        EuroFIRkod = "E123"
-                    },
-                    new IngredientDTO
-                    {
-                        Nummer = 2,
-                        Namn = "Sugar",
-                        VattenFaktor = 0.0,
-                        FettFaktor = 0.0,
-                        ViktForeTillagning = 100,
-                        ViktEfterTillagning = 100,
-                        Tillagningsfaktor = "0%",
-                        RetentionsFaktorer = new List<RetentionFactor>(),
-                        EuroFIRkod = "E124"
-                    }
+                    FoodItemId = 1,
+                    LivsmedelsTypId = 2,
+                    Nummer = 2074,
+                    Namn = "Peanut butter",
+                    VetenskapligtNamn = "",
+                    Ingredienser = new List<IngredientDTO>()
                 }
-            },
-            new FoodItemDTO
-            {
-                LivsmedelsTypId = 2,               
-                Nummer = 2,                
-                Namn = "Test Livsmedel 2",
-                VetenskapligtNamn = "Testus Livsmedelus II",
-            
-                Ingredienser = new List<IngredientDTO>
-                {
-                    new IngredientDTO
-                    {
-                        Nummer = 3,
-                        Namn = "Flour",
-                        VattenFaktor = 0.12,
-                        FettFaktor = 0.02,
-                        ViktForeTillagning = 500,
-                        ViktEfterTillagning = 500,
-                        Tillagningsfaktor = "0%",
-                        RetentionsFaktorer = new List<RetentionFactor>
-                        {
-                            new RetentionFactor { NaringsamnesNamn = "Protein", Faktor = "0.85" }
-                        },
-                        EuroFIRkod = "E125"
-                    }
-                }
-            }
 
             });
         }
 
-        public Task<FoodItemDTO> GetFoodItemByFoodIdAsync(int foodId)
+        public Task<FoodItemDTO> GetFoodItemByFoodIdAsync(int foodId, int language)
         {
-            throw new NotImplementedException();
+            var localizedMessage = new LocalizedMessage();
+
+            var mockFoodItem = new FoodItemDTO
+            {
+                FoodItemId = 0,
+                LivsmedelsTypId = 2,
+                Nummer = 2073,
+                Namn = "Peanut sauce",
+                VetenskapligtNamn = "",
+                Ingredienser = new List<IngredientDTO>()
+            };
+
+            
+            if (foodId != mockFoodItem.Nummer)
+            {
+                var errorMessage = localizedMessage.GetLocalizedMessage("FoodItemNotFound", language);
+
+                // Simulate not found exception
+                throw new KeyNotFoundException($"{errorMessage}{foodId}");
+            }
+
+            return Task.FromResult(mockFoodItem);
         }
 
-        public Task<FoodItemDTO> GetFoodItemWithIngredientsAsync(int foodId)
+
+        public Task<FoodItemDTO> GetFoodItemWithIngredientsAsync(int foodId, int language)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new FoodItemDTO
+            {
+                FoodItemId = 0,
+                LivsmedelsTypId = 2,
+                Nummer = 2073,
+                Namn = "Peanut sauce",
+                VetenskapligtNamn = "",
+                Ingredienser = new List<IngredientDTO>
+        {
+            new IngredientDTO
+            {
+                IngredientId = 0,
+                Nummer = 1893,
+                Namn = "Brown sugar",
+                VattenFaktor = 1,
+                FettFaktor = 1,
+                ViktForeTillagning = 26,
+                ViktEfterTillagning = 26,
+                Tillagningsfaktor = "Dry goods",
+                RetentionsFaktorer = new List<RetentionFactor>
+                {
+                    new RetentionFactor { NaringsamnesNamn = "Potassium, K", Faktor = 1 },
+                    new RetentionFactor { NaringsamnesNamn = "Vitamin C", Faktor = 1 },
+                    new RetentionFactor { NaringsamnesNamn = "Vitamin B-12", Faktor = 0.9M },
+                    new RetentionFactor { NaringsamnesNamn = "Vitamin B-6", Faktor = 0.6M },
+                },
+                EuroFIRkod = null
+            },
+            new IngredientDTO
+            {
+                IngredientId = 0,
+                Nummer = 1590,
+                Namn = "Coconut milk",
+                VattenFaktor = 0.79M,
+                FettFaktor = 1,
+                ViktForeTillagning = 200,
+                ViktEfterTillagning = 171.44M,
+                Tillagningsfaktor = "Fluids, boiled",
+                RetentionsFaktorer = new List<RetentionFactor>
+                {
+                    new RetentionFactor { NaringsamnesNamn = "Potassium, K", Faktor = 1 },
+                    new RetentionFactor { NaringsamnesNamn = "Thiamin", Faktor = 0.9M },
+                    new RetentionFactor { NaringsamnesNamn = "Riboflavin", Faktor = 0.95M },
+                    new RetentionFactor { NaringsamnesNamn = "Vitamin C", Faktor = 1 },
+                    new RetentionFactor { NaringsamnesNamn = "Vitamin B-12", Faktor = 0.95M },
+                    new RetentionFactor { NaringsamnesNamn = "Vitamin B-6", Faktor = 0.9M },
+                    new RetentionFactor { NaringsamnesNamn = "Folate, total", Faktor = 0.8M }
+                },
+                EuroFIRkod = null
+            }
+        }
+            });
         }
 
-        public Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId)
+
+        public Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId, int language)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new List<IngredientDTO>
+            {
+                new IngredientDTO
+                {
+                    IngredientId = 0,
+                    Nummer = 1893,
+                    Namn = "Brown sugar",
+                    VattenFaktor = 1,
+                    FettFaktor = 1,
+                    ViktForeTillagning = 26,
+                    ViktEfterTillagning = 26,
+                    Tillagningsfaktor = "Dry goods",
+                    RetentionsFaktorer = new List<RetentionFactor>
+                    {
+                        new RetentionFactor { NaringsamnesNamn = "Potassium, K", Faktor = 1 },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin C", Faktor = 1 },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-12", Faktor = 0.9M },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-6", Faktor = 0.6M },
+                    },
+                    EuroFIRkod = null
+                },
+                new IngredientDTO
+                {
+                    IngredientId = 0,
+                    Nummer = 1590,
+                    Namn = "Coconut milk",
+                    VattenFaktor = 0.79M,
+                    FettFaktor = 1,
+                    ViktForeTillagning = 200,
+                    ViktEfterTillagning = 171.44M,
+                    Tillagningsfaktor = "Fluids, boiled",
+                    RetentionsFaktorer = new List<RetentionFactor>
+                    {
+                        new RetentionFactor { NaringsamnesNamn = "Potassium, K", Faktor = 1 },
+                        new RetentionFactor { NaringsamnesNamn = "Thiamin", Faktor = 0.9M },
+                        new RetentionFactor { NaringsamnesNamn = "Riboflavin", Faktor = 0.95M },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin C", Faktor = 1 },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-12", Faktor = 0.95M },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-6", Faktor = 0.9M },
+                        new RetentionFactor { NaringsamnesNamn = "Folate, total", Faktor = 0.8M }
+                    },
+                    EuroFIRkod = null
+                }
+            });
         }
     }
 }
-*/
+
