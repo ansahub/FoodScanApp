@@ -4,12 +4,12 @@ using Xunit;
 
 namespace FoodScanApp.Test.UnitTests
 {
-    public class FoodItemControllerTest
+    public class FoodItemServiceTest
     {
         private readonly MockFoodDataService _mockService;
         private readonly LocalizedMessage _localizedMessage;
 
-        public FoodItemControllerTest()
+        public FoodItemServiceTest()
         {
             _localizedMessage = new LocalizedMessage();
             _mockService = new MockFoodDataService(_localizedMessage);

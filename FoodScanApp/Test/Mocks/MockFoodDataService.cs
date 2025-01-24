@@ -21,7 +21,7 @@ namespace FoodScanApp.Test.Mocks
             {
                 new FoodItemDTO
                 {
-                    FoodItemId = 0,
+                    //FoodItemId = 0,
                     LivsmedelsTypId = 2,
                     Nummer = 2073,
                     Namn = "Peanut sauce",
@@ -30,7 +30,7 @@ namespace FoodScanApp.Test.Mocks
                 },
                 new FoodItemDTO
                 {
-                    FoodItemId = 1,
+                    //FoodItemId = 1,
                     LivsmedelsTypId = 2,
                     Nummer = 2074,
                     Namn = "Peanut butter",
@@ -47,7 +47,7 @@ namespace FoodScanApp.Test.Mocks
 
             var mockFoodItem = new FoodItemDTO
             {
-                FoodItemId = 0,
+                //FoodItemId = 0,
                 LivsmedelsTypId = 2,
                 Nummer = 2073,
                 Namn = "Peanut sauce",
@@ -120,7 +120,7 @@ namespace FoodScanApp.Test.Mocks
         {
             return Task.FromResult(new FoodItemDTO
             {
-                FoodItemId = 0,
+                //FoodItemId = 0,
                 LivsmedelsTypId = 2,
                 Nummer = 2073,
                 Namn = "Peanut sauce",
