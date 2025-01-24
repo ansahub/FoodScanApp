@@ -13,20 +13,8 @@ namespace FoodScanApp.Helper
                 _ => new System.Globalization.CultureInfo("en-US")  // Default to English
             };
 
-            // Create ResourceManager for each language
-            ResourceManager resourceManager;
-
-            // Handle different resource files
-            if (cultureInfo.Name == "sv-SE")
-            {
-                // For Swedish, use Resource.sv.resx
-                resourceManager = new ResourceManager("FoodScanApp.Resources.Resource", typeof(LocalizedMessage).Assembly);
-            }
-            else
-            {
-                // For English or default, use Resource.resx
-                resourceManager = new ResourceManager("FoodScanApp.Resources.Resource", typeof(LocalizedMessage).Assembly);
-            }
+            // Use a single ResourceManager pointing to the base "Resource"
+            var resourceManager = new ResourceManager("FoodScanApp.Resources.Resource", typeof(LocalizedMessage).Assembly);
 
             // Return the localized string
             return resourceManager.GetString(key, cultureInfo);

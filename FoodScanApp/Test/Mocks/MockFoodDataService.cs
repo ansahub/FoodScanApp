@@ -1,11 +1,7 @@
-﻿using FoodScanApp.Controllers;
-using FoodScanApp.DTOs;
+﻿using FoodScanApp.DTOs;
 using FoodScanApp.Helper;
 using FoodScanApp.Services;
-using Microsoft.AspNetCore.Mvc;
-using Xunit;
-using Xunit.Abstractions;
-using Xunit.Sdk;
+
 
 namespace FoodScanApp.Test.Mocks
 {
@@ -69,8 +65,56 @@ namespace FoodScanApp.Test.Mocks
             }
 
             return Task.FromResult(mockFoodItem);
-        }
+        }      
 
+
+        public Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId, int language)
+        {
+            return Task.FromResult(new List<IngredientDTO>
+            {
+                new IngredientDTO
+                {
+                    IngredientId = 0,
+                    Nummer = 1893,
+                    Namn = "Brown sugar",
+                    VattenFaktor = 1,
+                    FettFaktor = 1,
+                    ViktForeTillagning = 26,
+                    ViktEfterTillagning = 26,
+                    Tillagningsfaktor = "Dry goods",
+                    RetentionsFaktorer = new List<RetentionFactor>
+                    {
+                        new RetentionFactor { NaringsamnesNamn = "Potassium, K", Faktor = 1 },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin C", Faktor = 1 },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-12", Faktor = 0.9M },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-6", Faktor = 0.6M },
+                    },
+                    EuroFIRkod = null
+                },
+                new IngredientDTO
+                {
+                    IngredientId = 0,
+                    Nummer = 1590,
+                    Namn = "Coconut milk",
+                    VattenFaktor = 0.79M,
+                    FettFaktor = 1,
+                    ViktForeTillagning = 200,
+                    ViktEfterTillagning = 171.44M,
+                    Tillagningsfaktor = "Fluids, boiled",
+                    RetentionsFaktorer = new List<RetentionFactor>
+                    {
+                        new RetentionFactor { NaringsamnesNamn = "Potassium, K", Faktor = 1 },
+                        new RetentionFactor { NaringsamnesNamn = "Thiamin", Faktor = 0.9M },
+                        new RetentionFactor { NaringsamnesNamn = "Riboflavin", Faktor = 0.95M },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin C", Faktor = 1 },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-12", Faktor = 0.95M },
+                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-6", Faktor = 0.9M },
+                        new RetentionFactor { NaringsamnesNamn = "Folate, total", Faktor = 0.8M }
+                    },
+                    EuroFIRkod = null
+                }
+            });
+        }
 
         public Task<FoodItemDTO> GetFoodItemWithIngredientsAsync(int foodId, int language)
         {
@@ -125,55 +169,6 @@ namespace FoodScanApp.Test.Mocks
                 EuroFIRkod = null
             }
         }
-            });
-        }
-
-
-        public Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId, int language)
-        {
-            return Task.FromResult(new List<IngredientDTO>
-            {
-                new IngredientDTO
-                {
-                    IngredientId = 0,
-                    Nummer = 1893,
-                    Namn = "Brown sugar",
-                    VattenFaktor = 1,
-                    FettFaktor = 1,
-                    ViktForeTillagning = 26,
-                    ViktEfterTillagning = 26,
-                    Tillagningsfaktor = "Dry goods",
-                    RetentionsFaktorer = new List<RetentionFactor>
-                    {
-                        new RetentionFactor { NaringsamnesNamn = "Potassium, K", Faktor = 1 },
-                        new RetentionFactor { NaringsamnesNamn = "Vitamin C", Faktor = 1 },
-                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-12", Faktor = 0.9M },
-                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-6", Faktor = 0.6M },
-                    },
-                    EuroFIRkod = null
-                },
-                new IngredientDTO
-                {
-                    IngredientId = 0,
-                    Nummer = 1590,
-                    Namn = "Coconut milk",
-                    VattenFaktor = 0.79M,
-                    FettFaktor = 1,
-                    ViktForeTillagning = 200,
-                    ViktEfterTillagning = 171.44M,
-                    Tillagningsfaktor = "Fluids, boiled",
-                    RetentionsFaktorer = new List<RetentionFactor>
-                    {
-                        new RetentionFactor { NaringsamnesNamn = "Potassium, K", Faktor = 1 },
-                        new RetentionFactor { NaringsamnesNamn = "Thiamin", Faktor = 0.9M },
-                        new RetentionFactor { NaringsamnesNamn = "Riboflavin", Faktor = 0.95M },
-                        new RetentionFactor { NaringsamnesNamn = "Vitamin C", Faktor = 1 },
-                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-12", Faktor = 0.95M },
-                        new RetentionFactor { NaringsamnesNamn = "Vitamin B-6", Faktor = 0.9M },
-                        new RetentionFactor { NaringsamnesNamn = "Folate, total", Faktor = 0.8M }
-                    },
-                    EuroFIRkod = null
-                }
             });
         }
     }
