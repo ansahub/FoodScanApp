@@ -1,11 +1,5 @@
-﻿using FoodScanApp.Controllers;
-using FoodScanApp.DTOs;
 using FoodScanApp.Helper;
-using FoodScanApp.Models;
-using FoodScanApp.Services;
 using FoodScanApp.Test.Mocks;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Xunit;
 
 namespace FoodScanApp.Test.UnitTests

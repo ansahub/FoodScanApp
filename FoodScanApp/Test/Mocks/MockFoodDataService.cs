@@ -1,4 +1,4 @@
-﻿using FoodScanApp.DTOs;
+using FoodScanApp.DTOs;
 using FoodScanApp.Helper;
 using FoodScanApp.Services;
 
@@ -173,4 +173,3 @@ namespace FoodScanApp.Test.Mocks
         }
     }
 }
-

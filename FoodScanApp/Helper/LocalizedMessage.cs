@@ -10,7 +10,7 @@ namespace FoodScanApp.Helper
             {
                 1 => new System.Globalization.CultureInfo("sv-SE"), // Swedish
                 2 => new System.Globalization.CultureInfo("en-US"), // English
-                _ => new System.Globalization.CultureInfo("en-US")  // Default to English
+                _ => new System.Globalization.CultureInfo("sv-SE")  // Default to English
             };
 
             // Use a single ResourceManager pointing to the base "Resource"
