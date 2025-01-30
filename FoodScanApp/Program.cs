@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient<FoodDataService>(); // Lägg till HttpClient som tjänst
 builder.Services.Configure<FoodApiSettings>(builder.Configuration.GetSection("FoodApi"));
 builder.Services.AddHttpClient<IFoodDataService, FoodDataService>();
+builder.Services.AddSingleton<LocalizedMessage>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
