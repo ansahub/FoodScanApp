@@ -14,6 +14,8 @@ namespace FoodScanApp.DTOs
         public string Namn { get; set; }
         public string VetenskapligtNamn { get; set; }
         public List<IngredientDTO> Ingredienser { get; set; }
+        public List<RavarorDTO> Ravaror { get; set; }
+        public FoodItemAnalysisDTO Analysis { get; set; }
     }
 
     //TODO: Make a translation of the properties in the class in the FRONTEND!!

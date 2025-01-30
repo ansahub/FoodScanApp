@@ -120,6 +120,12 @@
   <data name="FoodItemNotFound" xml:space="preserve">
     <value>Kan inte hitta livsmedel med livsmedelsnummer:</value>
   </data>
+  <data name="HighSugarContent" xml:space="preserve">
+    <value>Hög sockerhalt, sockerhalten är</value>
+  </data>
+  <data name="LowSugarContent" xml:space="preserve">
+    <value>Sockerhalten är under (eller max) 10%, totalt:</value>
+  </data>
   <data name="RequestEx" xml:space="preserve">
     <value>Fel uppstod vid försök av att hämta livsmedel med livsmedelsnummer:</value>
   </data>

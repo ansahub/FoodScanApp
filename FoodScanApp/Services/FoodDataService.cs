@@ -7,6 +7,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Resources;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace FoodScanApp.Services
 {
@@ -29,12 +31,6 @@ namespace FoodScanApp.Services
             _localizedMessage = localizedMessage;
         }
 
-        /// <summary>
-        /// May have to remove this later, not necessary to have
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="Exception"></exception>
         public async Task<List<FoodItemDTO>> GetAllFoodItemsAsync()
         {
             var url = $"{_settings.BaseUrl}{_settings.Endpoint}?offset=0&limit=5&sprak=1"; //Make "sprak" dynamic as variable/input 1=Swe, 2=eng
@@ -64,31 +60,13 @@ namespace FoodScanApp.Services
             return foodItemsArray;
         }
 
-        /// <summary>
-        /// Get Livsmedel by livsmedelsId/FoodId
-        /// </summary>
-        /// <param name="foodId"></param>
-        /// <returns></returns>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="Exception"></exception>
+
         public async Task<FoodItemDTO> GetFoodItemByFoodIdAsync(int foodId, int language)
         {
-            var url = $"{_settings.BaseUrl}{_settings.Endpoint}/{foodId}/?sprak={language}"; //Make "sprak" dynamic as variable/input 1=Swe, 2=eng
+            var url = $"{_settings.BaseUrl}{_settings.Endpoint}/{foodId}/?sprak={language}"; // 1=Swe, 2=eng
             var response = await _httpClient.GetAsync(url);
-            var errorMessage = String.Empty;            
 
-            if (!response.IsSuccessStatusCode)
-            {
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    errorMessage = _localizedMessage.GetLocalizedMessage("FoodItemNotFound", language);
-                    throw new KeyNotFoundException($"{errorMessage}{foodId}");
-                }
-
-                errorMessage = _localizedMessage.GetLocalizedMessage("RequestEx", language);
-                throw new HttpRequestException($"{errorMessage}{foodId}, {response.StatusCode}");
-            }
+            GetErrorAndExceptionMessageIfIdNotFound(response, foodId, language);
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
 
@@ -101,17 +79,103 @@ namespace FoodScanApp.Services
         }
 
 
-        /// <summary>
-        /// Get ingredienser by LivsmedelsId/FoodId
-        /// </summary>
-        /// <param name="foodId"></param>
-        /// <returns></returns>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
         public async Task<List<IngredientDTO>> GetIngredientsByFoodIdAsync(int foodId, int language)
         {
             var url = $"{_settings.BaseUrl}{_settings.Endpoint}/{foodId}/ingredienser?sprak={language}";
             var response = await _httpClient.GetAsync(url);
+
+            GetErrorAndExceptionMessageIfIdNotFound(response, foodId, language);
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrEmpty(jsonResponse))
+            {
+                return new List<IngredientDTO>(); // Return an empty list if null or empty
+            }
+
+            var ingredient = JsonConvert.DeserializeObject<List<IngredientDTO>>(jsonResponse);
+            return ingredient ?? new List<IngredientDTO>();
+        }
+
+
+        public async Task<List<RavarorDTO>> GetRavarorByFoodIdAsync(int foodId, int language)
+        {
+            var url = $"{_settings.BaseUrl}{_settings.Endpoint}/{foodId}/ravaror?sprak={language}";
+            var response = await _httpClient.GetAsync(url);
+
+            GetErrorAndExceptionMessageIfIdNotFound(response, foodId, language);
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrEmpty(jsonResponse))
+            {
+                return new List<RavarorDTO>();
+            }
+
+            var ingredient = JsonConvert.DeserializeObject<List<RavarorDTO>>(jsonResponse);
+            return ingredient ?? new List<RavarorDTO>();
+        }
+
+
+
+        public async Task<FoodItemDTO> GetFoodItemWithIngredientsAndRavarorByFoodIdAsync(int foodId, int language)
+        {
+            // Fetch FoodItem
+            var foodItem = await GetFoodItemByFoodIdAsync(foodId, language);
+
+            // Fetch Ingredients based on the FoodItem
+            var ingredients = await GetIngredientsByFoodIdAsync(foodId, language);
+
+            // Fetch Råvaror based on the FoodItem
+            var ravaror = await GetRavarorByFoodIdAsync(foodId, language);
+
+            // Add ingredients and ravaror to the FoodItem
+            foodItem.Ingredienser = ingredients;
+            foodItem.Ravaror = ravaror;
+
+            // Perform the analysis
+            foodItem.Analysis = AnalyzeFoodItem(ravaror, language);
+
+            return foodItem;
+        }
+
+
+
+        private FoodItemAnalysisDTO AnalyzeFoodItem(List<RavarorDTO> ravaror, int language)
+        {
+            // Calculate total percentage of ingredients
+            double totalPercentage = ravaror.Sum(i => i.Andel);
+
+            string highSugarMessage = _localizedMessage.GetLocalizedMessage("HighSugarContent", language);
+            string lowSugarMessage = _localizedMessage.GetLocalizedMessage("LowSugarContent", language);
+
+            // Check for high sugar content
+            var sugar = ravaror.Where(i =>
+                i.Namn.IndexOf("sugar", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                i.Namn.IndexOf("socker", StringComparison.OrdinalIgnoreCase) >= 0).ToList();          
+
+
+            var sugarPercentage = sugar.Sum(i => i.Andel);
+
+            if (sugarPercentage > 10)
+            {
+                return new FoodItemAnalysisDTO
+                {
+                    SockerProcentHalt = sugarPercentage,
+                    SockerWarningText = $"{highSugarMessage} {sugarPercentage}%"
+                };
+            }
+
+            return new FoodItemAnalysisDTO
+            {
+                SockerProcentHalt = sugarPercentage,
+                SockerWarningText = $"{lowSugarMessage} {sugarPercentage}%"
+            };
+        }
+
+
+        public void GetErrorAndExceptionMessageIfIdNotFound(HttpResponseMessage response, int foodId, int language)
+        {
             var errorMessage = String.Empty;
 
             if (!response.IsSuccessStatusCode)
@@ -125,37 +189,6 @@ namespace FoodScanApp.Services
                 errorMessage = _localizedMessage.GetLocalizedMessage("RequestEx", language);
                 throw new HttpRequestException($"{errorMessage}{foodId}, {response.StatusCode}");
             }
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            if (string.IsNullOrEmpty(jsonResponse))
-            {
-                return new List<IngredientDTO>(); // Return an empty list if null or empty
-            }
-
-            var ingredient = JsonConvert.DeserializeObject<List<IngredientDTO>>(jsonResponse);
-            return ingredient ?? new List<IngredientDTO>();
         }
-
-        /// <summary>
-        /// Get Livsmedel with its ingrediens by LivsmdelsId/FoodId
-        /// </summary>
-        /// <param name="foodId"></param>
-        /// <returns></returns>
-        public async Task<FoodItemDTO> GetFoodItemWithIngredientsAsync(int foodId, int language)
-        {
-            // Fetch FoodItem
-            var foodItem = await GetFoodItemByFoodIdAsync(foodId, language);
-
-            // Fetch Ingredients based on the FoodItem
-            var ingredients = await GetIngredientsByFoodIdAsync(foodId, language);
-
-            // Add ingredients to the FoodItem
-            foodItem.Ingredienser = ingredients;
-
-            return foodItem;
-        }
-
-
     }
 }

@@ -13,7 +13,6 @@ namespace FoodScanApp.Models
         public decimal ViktEfterTillagning { get; set; }
         public string Tillagningsfaktor { get; set; }
         public List<RetentionFactor> RetentionsFaktorer { get; set; }
-        public string EuroFIRkod { get; set; }
 
     }
 
@@ -21,5 +20,6 @@ namespace FoodScanApp.Models
     {
         public string NaringsamnesNamn { get; set; }
         public decimal Faktor { get; set; }
+        public string EuroFIRkod { get; set; }
     }
 }

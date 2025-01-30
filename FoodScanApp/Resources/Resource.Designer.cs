@@ -70,6 +70,24 @@ namespace FoodScanApp.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High sugar content with total of.
+        /// </summary>
+        public static string HighSugarContent {
+            get {
+                return ResourceManager.GetString("HighSugarContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sugar content is below (or maximum) 10%, with total of:.
+        /// </summary>
+        public static string LowSugarContent {
+            get {
+                return ResourceManager.GetString("LowSugarContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Something went wrong while trying to get the food item with foodId:.
         /// </summary>
         public static string RequestEx {

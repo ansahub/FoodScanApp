@@ -121,6 +121,14 @@
     <value>Can't find the food item with the foodId:</value>
     <comment>KeyNotFoundException</comment>
   </data>
+  <data name="HighSugarContent" xml:space="preserve">
+    <value>High sugar content with total of</value>
+    <comment>Warning when sugar content is over 10%</comment>
+  </data>
+  <data name="LowSugarContent" xml:space="preserve">
+    <value>Sugar content is below (or maximum) 10%, with total of:</value>
+    <comment>Less than 10% sugar content</comment>
+  </data>
   <data name="RequestEx" xml:space="preserve">
     <value>Something went wrong while trying to get the food item with foodId:</value>
     <comment>HttpRequestException</comment>
